@@ -11,7 +11,8 @@
             tbody tr td:nth-child(7),
             tbody tr td:nth-child(10),
             tbody tr td:nth-child(13),
-            tbody tr td:nth-child(16)
+            tbody tr td:nth-child(16),
+            tbody tr td:nth-child(19)
             {
                 border-right: 1px solid white;
             }
@@ -49,6 +50,35 @@
                         }
                     }
                 }
+                return performance.now() - start;
+            }
+
+            //alternative way for CountingSort Algorithm
+            function countingSort(arr){
+                var helper = []; // This helper will note how many times each number appeared in the arr
+                                // Since JS arrary is an object and elements are not continuously stored, helper's Space Complexity minor that n
+                for(var i = 0; i<arr.length; i++){
+                    if(!helper[arr[i]]){
+                        helper[arr[i]] = 1;
+                    }else{
+                        helper[arr[i]] += 1;
+                    }
+                }
+
+                var newArr = []; 
+                for(i in helper){
+                    while(helper[i]>0){
+                        newArr.push(parseInt(i));
+                        helper[i]--;
+                    }
+                }
+                return newArr; 
+            }
+
+            //Counting Sort without Performance Measure
+            function perfCountingSort(arr){
+                var start = performance.now();
+                arr.reduce( (acc, v) => (acc[v] = (acc[v] || 0) + 1, acc), [] ).reduce( (acc, n, i) => acc.concat(Array(n).fill(i)), [] ); 
                 return performance.now() - start;
             }
 
@@ -216,7 +246,7 @@
             $(function(){
 
                 //Test Bench
-                var sortingMethods = ['BubbleSort','SelectionSort','InsertionSort','MergeSort','HeapSort','QuickSort']; //add function name for another sorting method (function name should be like ex:'perfQuickSort' and should return execution time)
+                var sortingMethods = ['BubbleSort','SelectionSort','InsertionSort','CountingSort','MergeSort','HeapSort','QuickSort']; //add function name for another sorting method (function name should be like ex:'perfQuickSort' and should return execution time)
                 sortingMethods.forEach(function(element) {
                     $('#sorts thead tr:nth-child(1)').append('<th colspan="3" scope="col">'+element+'</th>');
                     $('#sorts thead tr:nth-child(2)').append('<th scope="col">Amount: </th><th scope="col">Sorting time:</th><th scope="col">Randomize time:</th>');
