@@ -6,6 +6,7 @@
         <title>Sortowania</title>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
         <style>
+            thead tr th,
             tbody tr th,
             tbody tr td:nth-of-type(3n)
             {
@@ -28,6 +29,7 @@
         <div id="curve_chart_big" style="width: 100%; height: 500px"></div>
         <div id="curve_chart" style="width: 100%; height: 500px"></div>
         <div id="curve_chart_small" style="width: 100%; height: 500px"></div>
+        <div id="curve_chart_verry_small" style="width: 100%; height: 500px"></div>
 
         <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
@@ -35,7 +37,7 @@
         <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 
         <script sync>
-            //Bubble Sort returning Performance Measure
+            //Bubble Sort with Performance Measure
             function perfBubbleSort(items){
                 var start = performance.now();
                 var length = items.length;
@@ -46,6 +48,36 @@
                         }
                     }
                 }
+                return performance.now() - start;
+            }
+
+            //CoctailSort (also know as bidirectional bubblesor, shaker sort) with Performance Measure (mix of Bubble sort and Comprasion Sort)
+            function perfCocktailSort(arr) {
+                var start = performance.now();
+                var swapped;
+                do {
+                for(var i = 0; i < arr.length - 2; i++) {
+                    if(arr[i] > arr[i+1]) {
+                    var temp = arr[i];
+                    arr[i] = arr[i+1];
+                    arr[i+1] = temp;
+                    swapped = true;
+                    }
+                }	
+                if(!swapped) {
+                    break;
+                }
+                swapped = false;
+                for( i = arr.length - 2; i > 0; i--) {
+                    if(arr[i] > arr[i+1]) {
+                    var temp1 = arr[i];
+                    arr[i] = arr[i+1];
+                    arr[i+1] = temp1;
+                    swapped = true;
+                    }
+                }
+                } while(swapped);
+                //return arr;
                 return performance.now() - start;
             }
 
@@ -80,6 +112,24 @@
                     }
                     items[j] = tmp;
                 }
+                return performance.now() - start;
+            }
+
+            //GnomeSort (also known as stupid sort) with Performance Measure (Simmilar to insertion sort with swaps form Bubble Sort)
+            function perfGnomeSort(arr) {
+                var start = performance.now();
+                function moveBack(i) {
+                    for( ; i > 0 && arr[i-1] > arr[i]; i--)
+                    {
+                        var t = arr[i];
+                        arr[i] = arr[i-1];
+                        arr[i-1] = t;
+                    }
+                }
+                for (var i = 1; i < arr.length; i++) {
+                    if (arr[i-1] > arr[i]) moveBack(i);
+                }
+                //return arr;
                 return performance.now() - start;
             }
                
@@ -180,7 +230,7 @@
                 var digit = (a & bitMask) >>> shiftRightAmount; // extract the digit we are sorting based on
                 return digit;
             }
-            // June 2017 Victor J. Duvanenko High Performance LSD Radix Sort for arrays of unsigned integers
+            // June 2017 Victor J. Duvanenko High Performance LSD Radix Sort for arrays of unsigned integers (https://duvanenko.tech.blog/2017/06/15/faster-sorting-in-javascript/)
             function perfRadixSortLSD(_input_array) {
                 var start = performance.now();
                 var numberOfBins = 256;
@@ -442,7 +492,7 @@
             $(function(){
 
                 //Test Bench
-                var sortingMethods = ['BubbleSort','SelectionSort','InsertionSort','CountingSort','BucketSort','RadixSortLSD','RadixBucketSort','MergeSort','ShellSort','HeapSort','QuickSort']; //add function name for another sorting method (function name should be like ex:'perfQuickSort' and should return execution time)
+                var sortingMethods = ['BubbleSort','CocktailSort','SelectionSort','InsertionSort','GnomeSort','CountingSort','BucketSort','RadixSortLSD','RadixBucketSort','MergeSort','ShellSort','HeapSort','QuickSort']; //add function name for another sorting method (function name should be like ex:'perfQuickSort' and should return execution time)
                 sortingMethods.forEach(function(element) {
                     $('#sorts thead tr:nth-child(1)').append('<th colspan="3" scope="col">'+element+'</th>');
                     $('#sorts thead tr:nth-child(2)').append('<th scope="col">Amount: </th><th scope="col">Sorting time:</th><th scope="col">Randomize time:</th>');
@@ -508,22 +558,22 @@
                         title: 'Sorts Performance 5 to 3000 elements',
                         curveType: 'none',
                         hAxis: {title: 'Amount', minValue: 5 }, 
-                        vAxis: {title: 'Time [ms]', minValue: 0, viewWindow: {max: 2} },
-                        legend: { position: 'top', maxLines: 5 }
-                    };
-
-                    var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
-                    chart.draw(data, options);
-
-                    var options = {
-                        title: 'Sorts Performance 5 to 3000 elements',
-                        curveType: 'none',
-                        hAxis: {title: 'Amount', minValue: 5 }, 
                         vAxis: {title: 'Time [ms]', minValue: 0},
                         legend: { position: 'top', maxLines: 5 }
                     };
 
                     var chart = new google.visualization.LineChart(document.getElementById('curve_chart_big'));
+                    chart.draw(data, options);
+
+                    var options = {
+                        title: 'Sorts Performance 5 to 3000 elements (with smaller time range)',
+                        curveType: 'none',
+                        hAxis: {title: 'Amount', minValue: 5 }, 
+                        vAxis: {title: 'Time [ms]', minValue: 0, viewWindow: {max: 2} },
+                        legend: { position: 'top', maxLines: 5 }
+                    };
+
+                    var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
                     chart.draw(data, options);
 
                     chart = new google.visualization.LineChart(document.getElementById('curve_chart_small'));
@@ -535,6 +585,17 @@
                         legend: { position: 'top', maxLines: 5 }
                     };
                     data = google.visualization.arrayToDataTable(charData.slice(0,9));
+                    chart.draw(data, options);
+
+                    chart = new google.visualization.LineChart(document.getElementById('curve_chart_verry_small'));
+                    options = {
+                        title: 'Sorts Performance 5 to 40 elements (with smaller time range)',
+                        curveType: 'none',
+                        hAxis: {title: 'Amount', minValue: 5}, 
+                        vAxis: {title: 'Time [ms]', minValue: 0, viewWindow: {max: 0.05} },
+                        legend: { position: 'top', maxLines: 5 }
+                    };
+                    data = google.visualization.arrayToDataTable(charData.slice(0,6));
                     chart.draw(data, options);
                 }
                 //End Google Chart
