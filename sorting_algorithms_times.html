@@ -21,6 +21,7 @@
                     <th scope="col">Sorting numbers amount</th>
                 </tr>
                 <tr>
+                    <th scope="col">Amount: </th>
                 </tr>
             </thead>
             <tbody>
@@ -539,9 +540,10 @@
 
                 //Test Bench
                 var sortingMethods = ['BubbleSort','CocktailSort','CombSort','SelectionSort','InsertionSort','GnomeSort','CountingSort','BucketSort','RadixSortLSD','RadixBucketSort','MergeSort','ShellSort','HeapSort','QuickSort']; //add function name for another sorting method (function name should be like ex:'perfQuickSort' and should return execution time)
+                
                 sortingMethods.forEach(function(element) {
                     $('#sorts thead tr:nth-child(1)').append('<th colspan="3" scope="col">'+element+'</th>');
-                    $('#sorts thead tr:nth-child(2)').append('<th scope="col">Amount: </th><th scope="col">Sorting time:</th><th scope="col">Randomize time:</th>');
+                    $('#sorts thead tr:nth-child(2)').append('<th scope="col">Sorting time:</th><th scope="col">Randomize time:</th><th scope="col">Total Time: </th>');
                 }, this);
 
                 var averageSort = 0;
