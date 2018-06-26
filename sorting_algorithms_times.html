@@ -20,16 +20,13 @@
             <div class="alert alert-danger" role="alert">
                 Important note: Scripts need at least 30 to 45 seconds to generate results and charts. Results also depend on the current CPU load. It is recommended to close any other significant CPU consuming processes. It is not recommended to run this script on AMD-based computers, because of significant distortions in the results. 
             </div>
+            <div class="text-center">
+                <button type="button" class="btn btn-danger start-button"><h5>Click here to start checking sorting times!</h5></button>
+            </div>
         </div>
         <div class="container-fluid">
             <table class="table table-striped table-dark" id="sorts">
                 <thead>
-                    <tr>
-                        <th scope="col">Sorting numbers amount</th>
-                    </tr>
-                    <tr>
-                        <th scope="col">Amount: </th>
-                    </tr>
                 </thead>
                 <tbody>
                 </tbody>
@@ -540,10 +537,18 @@
                 return quickSort(less).concat(same, quickSort(more));
             } 
 
-            //Quick Sort returning Performance Measure
+            //Quick Sort with Performance Measure
             function perfQuickSort(items){
                 var start = performance.now();   
                 score = quickSort(items);
+                //console.log(score);
+                return performance.now() - start;
+            }
+
+            //Quick Sort with Performance Measure
+            function perfJavaScriptDefaultSort(items){
+                var start = performance.now();   
+                score = items.sort();
                 //console.log(score);
                 return performance.now() - start;
             }
@@ -566,115 +571,131 @@
 
             $(function(){
 
-                //Test Bench
-                var sortingMethods = ['BubbleSort','CocktailSort','CombSort','SelectionSort','InsertionSort','GnomeSort','CountingSort','BucketSort','RadixSortLSD','RadixBucketSort','MergeSort','ShellSort','HeapSort','QuickSort']; //add function name for another sorting method (function name should be like ex:'perfQuickSort' and should return execution time)
-                
-                sortingMethods.forEach(function(element) {
-                    $('#sorts thead tr:nth-child(1)').append('<th colspan="3" scope="col">'+element+'</th>');
-                    $('#sorts thead tr:nth-child(2)').append('<th scope="col">Sorting time:</th><th scope="col">Randomize time:</th><th scope="col">Total Time: </th>');
-                }, this);
+                $('.start-button').click(function(){
+                    performanceTest();
+                    $('.start-button').hide();
+                });
 
-                var averageSort = 0;
-                var averageRandom = 0;
-                var operations = 0;
-                var testPerSort = 250; //increse for more acurrate calculations (also drastically increase execution time)
-                var ElapsedTime = 0;
-                var charData = new Array();
-                charData.push( ['Amount'].concat(sortingMethods));
+                function performanceTest(){
+                    //Test Bench
+                    var sortingMethods = ['BubbleSort','CocktailSort','CombSort','SelectionSort','InsertionSort','GnomeSort','CountingSort','BucketSort','RadixSortLSD','RadixBucketSort','MergeSort','ShellSort','HeapSort','QuickSort','JavaScriptDefaultSort']; //add function name for another sorting method (function name should be like ex:'perfQuickSort' and should return execution time)
 
-                for(var i=5; i<=3000;){
-                    var htmlCode = '<tr><th scope="row">'+ i +'</th>';
-                    var  subCharData = new Array();
-                    subCharData.push(i);    
+                    $('#sorts thead').append('<tr><th scope="col">Sorting numbers amount</th></tr><tr><th scope="col">Amount: </th></tr>');
 
                     sortingMethods.forEach(function(element) {
-
-                        for(var g=0; g<testPerSort ;g++){
-                            test = doPerformanceMeasure(element, i);
-                            averageSort +=parseFloat(test[0]);
-                            averageRandom +=parseFloat(test[1]);
-                            operations++;
-                        }
-
-                        ElapsedTime += averageRandom+averageSort;
-
-                        averageSort = averageSort/testPerSort;
-                        averageRandom = averageRandom/testPerSort;
-                        sum = averageRandom+averageSort;
-
-                        subCharData.push(averageSort); 
-
-                        htmlCode+='<td>'+averageSort+'</td>'+'<td>'+averageRandom+'</td>'+'<td>'+sum+'</td>';
-
+                        $('#sorts thead tr:nth-child(1)').append('<th colspan="3" scope="col">'+element+'</th>');
+                        $('#sorts thead tr:nth-child(2)').append('<th scope="col">Sorting time [ms]:</th><th scope="col">Randomize time [ms]:</th><th scope="col">Total Time [ms]: </th>');
                     }, this);
 
-                    charData.push(subCharData);
+                    var averageSort = 0;
+                    var averageRandom = 0;
+                    var operations = 0;
+                    var testPerSort = 250; //increse for more acurrate calculations (also drastically increase execution time)
+                    var ElapsedTime = 0;
+                    var charData = new Array();
+                    charData.push( ['Amount'].concat(sortingMethods));
 
-                    htmlCode+= '</tr>';
-                    $('#sorts tbody').append(htmlCode);
+                    for(var i=5; i<=3000;){
+                        var htmlCode = '<tr><th scope="row">'+ i +'</th>';
+                        var  subCharData = new Array();
+                        subCharData.push(i);    
 
-                    if(i<20)i+=5;
-                    else if(i<100)i+=20;
-                    else if(i<1000)i+=100;
-                    else i+=1000;
+                        sortingMethods.forEach(function(element) {
+
+                            for(var g=0; g<testPerSort ;g++){
+                                test = doPerformanceMeasure(element, i);
+                                averageSort +=parseFloat(test[0]);
+                                averageRandom +=parseFloat(test[1]);
+                                operations++;
+                            }
+
+                            ElapsedTime += averageRandom+averageSort;
+
+                            averageSort = averageSort/testPerSort;
+                            averageRandom = averageRandom/testPerSort;
+                            sum = averageRandom+averageSort;
+
+                            subCharData.push(averageSort); 
+
+                            htmlCode+='<td>'+averageSort+'</td>'+'<td>'+averageRandom+'</td>'+'<td>'+sum+'</td>';
+
+                        }, this);
+
+                        charData.push(subCharData);
+
+                        htmlCode+= '</tr>';
+                        $('#sorts tbody').append(htmlCode);
+
+                        if(i<20)i+=5;
+                        else if(i<100)i+=20;
+                        else if(i<1000)i+=100;
+                        else i+=1000;
+                    }
+                    $('#sorts').append('<thead><th>Operations done:</th><th>'+operations+'</th><th>Elapsed time:</th><th>'+ElapsedTime+'</th></th></thead>');
+
+                    //Our Whole Data for Chart Generation
+                    console.log(charData);
+
+                    //Google Chart
+                    google.charts.load('current', {'packages':['corechart']});
+                    google.charts.setOnLoadCallback(drawChart);
+
+                    function drawChart() {
+                        $('#curve_chart_big, #curve_chart, #curve_chart_small, #curve_chart_verry_small').css({
+                            'width':'100%',
+                            'height':'500px'
+                        });
+
+                        $('div.container-fluid').css({'overflow':'scroll'})
+
+                        var data = google.visualization.arrayToDataTable(charData);
+
+                        var options = {
+                            title: 'Sorts Performance 5 to 3000 elements',
+                            curveType: 'none',
+                            hAxis: {title: 'Amount', minValue: 5 }, 
+                            vAxis: {title: 'Time [ms]', minValue: 0},
+                            legend: { position: 'top', maxLines: 5 }
+                        };
+
+                        var chart = new google.visualization.LineChart(document.getElementById('curve_chart_big'));
+                        chart.draw(data, options);
+
+                        var options = {
+                            title: 'Sorts Performance 5 to 3000 elements (with smaller time range)',
+                            curveType: 'none',
+                            hAxis: {title: 'Amount', minValue: 5 }, 
+                            vAxis: {title: 'Time [ms]', minValue: 0, viewWindow: {max: 2} },
+                            legend: { position: 'top', maxLines: 5 }
+                        };
+
+                        var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
+                        chart.draw(data, options);
+
+                        chart = new google.visualization.LineChart(document.getElementById('curve_chart_small'));
+                        options = {
+                            title: 'Sorts Performance 5 to 100 elements',
+                            curveType: 'none',
+                            hAxis: {title: 'Amount', minValue: 5}, 
+                            vAxis: {title: 'Time [ms]', minValue: 0},
+                            legend: { position: 'top', maxLines: 5 }
+                        };
+                        data = google.visualization.arrayToDataTable(charData.slice(0,9));
+                        chart.draw(data, options);
+
+                        chart = new google.visualization.LineChart(document.getElementById('curve_chart_verry_small'));
+                        options = {
+                            title: 'Sorts Performance 5 to 40 elements (with smaller time range)',
+                            curveType: 'none',
+                            hAxis: {title: 'Amount', minValue: 5}, 
+                            vAxis: {title: 'Time [ms]', minValue: 0, viewWindow: {max: 0.04} },
+                            legend: { position: 'top', maxLines: 5 }
+                        };
+                        data = google.visualization.arrayToDataTable(charData.slice(0,6));
+                        chart.draw(data, options);
+                    }
+                    //End Google Chart
                 }
-                $('#sorts').append('<thead><th>Operations done:</th><th>'+operations+'</th><th>Elapsed time:</th><th>'+ElapsedTime+'</th></th></thead>');
-
-                //Our Whole Data for Chart Generation
-                console.log(charData);
-
-                //Google Chart
-                google.charts.load('current', {'packages':['corechart']});
-                google.charts.setOnLoadCallback(drawChart);
-
-                function drawChart() {
-                    var data = google.visualization.arrayToDataTable(charData);
-
-                    var options = {
-                        title: 'Sorts Performance 5 to 3000 elements',
-                        curveType: 'none',
-                        hAxis: {title: 'Amount', minValue: 5 }, 
-                        vAxis: {title: 'Time [ms]', minValue: 0},
-                        legend: { position: 'top', maxLines: 5 }
-                    };
-
-                    var chart = new google.visualization.LineChart(document.getElementById('curve_chart_big'));
-                    chart.draw(data, options);
-
-                    var options = {
-                        title: 'Sorts Performance 5 to 3000 elements (with smaller time range)',
-                        curveType: 'none',
-                        hAxis: {title: 'Amount', minValue: 5 }, 
-                        vAxis: {title: 'Time [ms]', minValue: 0, viewWindow: {max: 2} },
-                        legend: { position: 'top', maxLines: 5 }
-                    };
-
-                    var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
-                    chart.draw(data, options);
-
-                    chart = new google.visualization.LineChart(document.getElementById('curve_chart_small'));
-                    options = {
-                        title: 'Sorts Performance 5 to 100 elements',
-                        curveType: 'none',
-                        hAxis: {title: 'Amount', minValue: 5}, 
-                        vAxis: {title: 'Time [ms]', minValue: 0},
-                        legend: { position: 'top', maxLines: 5 }
-                    };
-                    data = google.visualization.arrayToDataTable(charData.slice(0,9));
-                    chart.draw(data, options);
-
-                    chart = new google.visualization.LineChart(document.getElementById('curve_chart_verry_small'));
-                    options = {
-                        title: 'Sorts Performance 5 to 40 elements (with smaller time range)',
-                        curveType: 'none',
-                        hAxis: {title: 'Amount', minValue: 5}, 
-                        vAxis: {title: 'Time [ms]', minValue: 0, viewWindow: {max: 0.04} },
-                        legend: { position: 'top', maxLines: 5 }
-                    };
-                    data = google.visualization.arrayToDataTable(charData.slice(0,6));
-                    chart.draw(data, options);
-                }
-                //End Google Chart
             });
         </script>
     </body>

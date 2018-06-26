@@ -5,6 +5,7 @@ tbody tr td:nth-of-type(3n)
     border-right: 1px solid white;
 }
 
+/*
 div#curve_chart,
 div#curve_chart_big,
 div#curve_chart_small,
@@ -14,7 +15,10 @@ div#curve_chart_verry_small
     height: 500px;
 }
 
+
 div.container-fluid
 {
     overflow: scroll;
 }
+
+*/
