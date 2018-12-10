@@ -5,6 +5,38 @@ tbody tr td:nth-of-type(3n)
     border-right: 1px solid white;
 }
 
+#loading-box {
+    display: none;
+    padding: 15px;
+    text-align: center;
+}
+
+#circle {
+    margin-left: auto;
+    margin-right: auto;
+	width: 150px;
+    height: 150px;	
+}
+
+.loader {
+    width: calc(100% - 0px);
+	height: calc(100% - 0px);
+	border: 8px solid #162534;
+	border-top: 8px solid #09f;
+	border-radius: 50%;
+	animation: rotate 5s linear infinite;
+}
+
+@keyframes rotate {
+100% {transform: rotate(360deg);}
+} 
+
+.start-button:hover {
+    box-shadow: 0px 0px 15px black;
+    cursor: pointer;
+}
+
+
 /*
 div#curve_chart,
 div#curve_chart_big,

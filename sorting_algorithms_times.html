@@ -22,6 +22,19 @@
             </div>
             <div class="text-center">
                 <button type="button" class="btn btn-danger start-button"><h5>Click here to start checking sorting times!</h5></button>
+                <div id="loading-box">
+                    <div id="circle">
+                        <div class="loader">
+                            <div class="loader">
+                                <div class="loader">
+                                    <div class="loader">
+                    
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div> 
+                </div>
             </div>
         </div>
         <div class="container-fluid">
@@ -572,12 +585,14 @@
             $(function(){
 
                 $('.start-button').click(function(){
-                    performanceTest();
                     $('.start-button').hide();
+                    $('#loading-box').toggle();
+                    setTimeout(performanceTest, 400);
                 });
 
                 function performanceTest(){
                     //Test Bench
+
                     var sortingMethods = ['BubbleSort','CocktailSort','CombSort','SelectionSort','InsertionSort','GnomeSort','CountingSort','BucketSort','RadixSortLSD','RadixBucketSort','MergeSort','ShellSort','HeapSort','QuickSort','JavaScriptDefaultSort']; //add function name for another sorting method (function name should be like ex:'perfQuickSort' and should return execution time)
 
                     $('#sorts thead').append('<tr><th scope="col">Sorting numbers amount</th></tr><tr><th scope="col">Amount: </th></tr>');
@@ -695,6 +710,8 @@
                         chart.draw(data, options);
                     }
                     //End Google Chart
+
+                    $('#loading-box').hide();
                 }
             });
         </script>
